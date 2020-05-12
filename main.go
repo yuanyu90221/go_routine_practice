@@ -15,11 +15,11 @@ func main() {
 	wg := sync.WaitGroup{}
 	wg.Add(20)
 	for i := 0; i < 20; i++ {
-		go func(val int, wg *sync.WaitGroup) {
+		go func(val int, wg *sync.WaitGroup, out chan<- string) {
 			time.Sleep(time.Duration(rand.Int31n(1000)) * time.Millisecond)
-			fmt.Println("finished job id:", val)
+			out <- fmt.Sprintf("finished job id: %d", val)
 			wg.Done()
-		}(i, &wg)
+		}(i, &wg, outChan)
 	}
 	go func() {
 		wg.Wait()
