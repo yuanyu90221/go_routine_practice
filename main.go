@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"log"
 	"math/rand"
@@ -21,9 +20,9 @@ func main() {
 			time.Sleep(time.Duration(rand.Int31n(1000)) * time.Millisecond)
 			out <- fmt.Sprintf("finished job id: %d", val)
 
-			if val == 15 {
-				err <- errors.New("fail  job in 15")
-			}
+			// if val == 15 {
+			// 	err <- errors.New("fail  job in 15")
+			// }
 			wg.Done()
 		}(i, &wg, outChan, errChan)
 	}
@@ -41,6 +40,9 @@ Loop:
 			break Loop
 		case <-finishChan:
 			break Loop // break when finish channel receive message
+		case <-time.After(100 * time.Millisecond): //timeout machinism
+			log.Println("timeout")
+			break Loop
 		}
 	}
 }
